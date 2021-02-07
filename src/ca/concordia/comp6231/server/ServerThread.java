@@ -10,17 +10,13 @@ import java.util.Scanner;
 
 public class ServerThread implements Runnable {
 
-	private ServerSocket server;
-
 	private Socket client;
 
 	private ArrayList<Socket> totalClients;
 
 	private String message;
 
-	public ServerThread(ServerSocket p_server, Socket p_client, ArrayList<Socket> p_totalClients) {
-
-		server = p_server;
+	public ServerThread(Socket p_client, ArrayList<Socket> p_totalClients) {
 
 		client = p_client;
 
@@ -40,31 +36,33 @@ public class ServerThread implements Runnable {
 			PrintWriter pw;
 
 			while (!client.isClosed()) {
-				
+
 				if (scan.hasNextLine()) {
 
 					message = scan.nextLine();
-				}
 
-				System.out.println("User " + client.getPort() + ":" + message);
+					System.out.println("User " + client.getPort() + ":" + message);
 
-				// Send data to the clients
+					// Send data to the clients
 
-				for (Socket indClient : totalClients) {
+					for (Socket indClient : totalClients) {
 
-					pw = new PrintWriter(indClient.getOutputStream());
+						pw = new PrintWriter(indClient.getOutputStream());
 
-					if (pw != null) {
+						if (pw != null) {
 
-						System.out.println("Sending data to " + indClient.getPort() + message);
+							System.out.println("Sending data to " + indClient.getPort() + message);
 
-						pw.write(message + "\r\n");
+							pw.write(message + "\r\n");
 
-						pw.flush();
+							pw.flush();
+
+						}
 
 					}
 
 				}
+
 			}
 
 		} catch (IOException e) {

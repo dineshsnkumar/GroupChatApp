@@ -8,20 +8,27 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Server Class
+ * 
+ * @author dinesh
+ * @version 1.0.0
+ *
+ */
+
 public class Server {
 
-	ArrayList<Socket> clients ;
+	ArrayList<Socket> clients;
 
 	public ArrayList<Socket> getClients() {
-		
+
 		return clients;
 	}
-	
-	
+
 	public static void main(String[] args) {
 
 		Server serverObj = new Server();
-		
+
 		serverObj.startServer();
 
 	}
@@ -32,7 +39,7 @@ public class Server {
 			ServerSocket server = new ServerSocket(9999);
 
 			System.out.println("Server started at port 9999");
-			
+
 			clients = new ArrayList<Socket>();
 
 			while (true) {
@@ -43,7 +50,7 @@ public class Server {
 
 				clients.add(client);
 
-				ServerThread serverThreadObj = new ServerThread(server, client, clients);
+				ServerThread serverThreadObj = new ServerThread( client, clients);
 
 				Thread thread = new Thread(serverThreadObj);
 
@@ -51,10 +58,9 @@ public class Server {
 
 			}
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		}
-		
 
 	}
 

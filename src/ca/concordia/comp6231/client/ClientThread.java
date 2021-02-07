@@ -10,16 +10,32 @@ public class ClientThread implements Runnable {
 
 	private Socket client;
 
+	private String data;
+
+	private String username;
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+
 	public ClientThread(Socket p_socket) {
-
 		client = p_socket;
+	}
 
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	@Override
 	public void run() {
-
-		System.out.println("Creating a new user at port " + client.getLocalPort());
 
 		PrintWriter pw;
 
@@ -31,17 +47,29 @@ public class ClientThread implements Runnable {
 
 			Scanner scan = new Scanner(in);
 
+			data = "";
+
 			while (!client.isClosed()) {
-
-				String message = getMessage();
-
-				pw.write(message + "\r\n");
-
-				pw.flush();
 				
-				if (scan.hasNextLine()) {
+				if (in.available() > 0) {
 
-					System.out.println(scan.nextLine());
+					if (scan.hasNextLine()) {
+
+						System.out.println(scan.nextLine());
+
+					}
+
+				}
+
+				if (!data.isEmpty()) {
+
+					String message = getUsername() + " says " + data;
+
+					pw.write(message + "\r\n");
+
+					pw.flush();
+
+					data = "";
 
 				}
 
@@ -52,26 +80,6 @@ public class ClientThread implements Runnable {
 			e.printStackTrace();
 		}
 
-	}
-
-	public String getMessage() {
-
-		String message = "";
-
-		System.out.print("What do you want to say ?  ");
-
-		Scanner scan = new Scanner(System.in);
-
-		if (scan.hasNextLine()) {
-
-			message = scan.nextLine();
-
-		} else {
-
-			message = "";
-		}
-
-		return message;
 	}
 
 }
