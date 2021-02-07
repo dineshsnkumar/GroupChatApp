@@ -14,6 +14,10 @@ public class ClientThread implements Runnable {
 
 	private String username;
 
+	public ClientThread(Socket p_socket) {
+		client = p_socket;
+	}
+
 	public String getData() {
 		return data;
 	}
@@ -22,15 +26,12 @@ public class ClientThread implements Runnable {
 		this.data = data;
 	}
 
-	public ClientThread(Socket p_socket) {
-		client = p_socket;
-	}
-
 	public String getUsername() {
 		return username;
 	}
 
 	public void setUsername(String username) {
+
 		this.username = username;
 	}
 
@@ -50,16 +51,8 @@ public class ClientThread implements Runnable {
 			data = "";
 
 			while (!client.isClosed()) {
-				
-				if (in.available() > 0) {
 
-					if (scan.hasNextLine()) {
-
-						System.out.println(scan.nextLine());
-
-					}
-
-				}
+				readDataFromServer(in, scan);
 
 				if (!data.isEmpty()) {
 
@@ -80,6 +73,25 @@ public class ClientThread implements Runnable {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void readDataFromServer(InputStream in, Scanner scan) {
+
+		try {
+
+			if (in.available() > 0) {
+
+				if (scan.hasNextLine()) {
+
+					System.out.println(scan.nextLine());
+
+				}
+
+			}
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
 	}
 
 }

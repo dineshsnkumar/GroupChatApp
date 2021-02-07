@@ -11,9 +11,15 @@ public class Client {
 
 	public static void main(String[] args) {
 
-		InetAddress ia;
+		Client mainClientObj = new Client();
 
-		Scanner scan;
+		mainClientObj.startClient();
+
+	}
+
+	public void startClient() {
+
+		InetAddress ia;
 
 		try {
 
@@ -22,41 +28,13 @@ public class Client {
 			try {
 				Socket client = new Socket(ia, 9999);
 
-				scan = new Scanner(System.in);
-
 				ClientThread clientObj = new ClientThread(client);
 
 				Thread threadObj = new Thread(clientObj);
 
 				threadObj.start();
 
-				System.out.println("Enter Username: ");
-
-				String username = scan.nextLine();
-
-				if (!username.isEmpty()) {
-
-					clientObj.setUsername(username);
-
-				} else {
-
-					clientObj.setUsername("annoymous");
-
-				}
-
-				// Read data from the console
-
-				System.out.println("If you see a cursor it means you can type something");
-
-				while (threadObj.isAlive()) {
-
-					if (scan.hasNextLine()) {
-
-						clientObj.setData(scan.nextLine());
-
-					}
-
-				}
+				readDataFromClient(clientObj);
 
 			} catch (IOException e) {
 
@@ -66,6 +44,44 @@ public class Client {
 		} catch (UnknownHostException e) {
 
 			e.printStackTrace();
+		}
+	}
+
+	/***
+	 * Reading username from console if the user doesn't type the default is
+	 * annoymous
+	 * 
+	 * @param clientObj
+	 */
+
+	public void readDataFromClient(ClientThread clientObj) {
+
+		Scanner scan = new Scanner(System.in);
+
+		System.out.println("Enter Username: ");
+
+		String username = scan.nextLine();
+
+		if (!username.isEmpty()) {
+
+			clientObj.setUsername(username);
+
+		} else {
+
+			clientObj.setUsername("annoymous");
+
+		}
+
+		System.out.println("If you see a cursor it means you can type something");
+
+		while (true) {
+
+			if (scan.hasNextLine()) {
+
+				clientObj.setData(scan.nextLine());
+
+			}
+
 		}
 
 	}

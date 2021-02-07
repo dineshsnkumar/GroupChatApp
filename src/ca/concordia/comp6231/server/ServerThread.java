@@ -16,6 +16,8 @@ public class ServerThread implements Runnable {
 
 	private String message;
 
+	private InputStream is;
+
 	public ServerThread(Socket p_client, ArrayList<Socket> p_totalClients) {
 
 		client = p_client;
@@ -29,45 +31,63 @@ public class ServerThread implements Runnable {
 
 		try {
 
-			InputStream is = client.getInputStream();
+			is = client.getInputStream();
 
 			Scanner scan = new Scanner(is);
 
-			PrintWriter pw;
-
 			while (!client.isClosed()) {
 
-				if (scan.hasNextLine()) {
-
-					message = scan.nextLine();
-
-					System.out.println("User " + client.getPort() + ":" + message);
-
-					// Send data to the clients
-
-					for (Socket indClient : totalClients) {
-
-						pw = new PrintWriter(indClient.getOutputStream());
-
-						if (pw != null) {
-
-							System.out.println("Sending data to " + indClient.getPort() + message);
-
-							pw.write(message + "\r\n");
-
-							pw.flush();
-
-						}
-
-					}
-
-				}
+				checkMessage(scan, client);
 
 			}
 
 		} catch (IOException e) {
 
 			e.printStackTrace();
+		}
+
+	}
+
+	public void checkMessage(Scanner scan, Socket client) {
+
+		if (scan.hasNextLine()) {
+
+			message = scan.nextLine();
+
+			System.out.println("User " + client.getPort() + ":" + message);
+
+			sendMessagesToClients();
+
+		}
+
+	}
+
+	public void sendMessagesToClients() {
+
+		PrintWriter pw;
+
+		// Send data to the clients
+
+		for (Socket indClient : totalClients) {
+
+			try {
+				pw = new PrintWriter(indClient.getOutputStream());
+
+				if (pw != null) {
+
+					System.out.println("Sending data to " + indClient.getPort() + message);
+
+					pw.write(message + "\r\n");
+
+					pw.flush();
+
+				}
+
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+
 		}
 
 	}
